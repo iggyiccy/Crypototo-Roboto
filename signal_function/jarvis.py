@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
-from prophet import Prophet
-from datetime import datetime
-import pickle
 
 
 def initialize(cash=None):
@@ -87,14 +84,6 @@ def moving_average_signals(df):
 
     return signals
 
-def whale_alert():
-    retrun signals
-
-def deep_inenforcement():
-    retrun signals
-
-def facebook_prophet():
-    retrun signals
 
 def execute_trade_strategy(signals, account):
     """Makes a buy/sell/hold decision."""
@@ -124,10 +113,10 @@ def execute_trade_strategy(signals, account):
 account, df = initialize(10000)
 
 # Turns on the interactive mode of matplotlib (https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ion.html)
-plt.ion()
+# plt.ion()
 
 # Show the initial line chart
-plt.show()
+# plt.show()
 
 async def main():
     loop = asyncio.get_event_loop()
@@ -150,10 +139,10 @@ async def main():
         update_plot(df)
 
         # Update line chart
-        plt.pause(1)
+        # plt.pause(1)
 
         # Refresh the matplotlib plotting area to avoid extra memory consumption
-        plt.close()
+        # plt.close()
 
         await asyncio.sleep(1)
 
@@ -161,3 +150,13 @@ async def main():
 # Python 3.7+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
+
+
+### Main Handler ###
+def lambda_handler(event):
+    """
+    Route the incoming request based on intent.
+    The JSON body of the request is provided in the event slot.
+    """
+
+    return main(event)
