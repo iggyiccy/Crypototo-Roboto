@@ -1,0 +1,10 @@
+ccxt
+yfinance
+dash_core_components
+dash_bootstrap_components
+dash
+pandas
+python-dotenv
+numpy==1.20.2
+matplotlib
+

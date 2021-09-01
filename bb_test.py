@@ -89,9 +89,22 @@ def bollinger_bands(df):
     Generates trading signals based on the Bollinger Bands indicator
     """
     sma = 20
-    upper_bb = sma + (sma.std() * 2)
-    lower_bb = sma - (sma.std() * 2)
+    std = df.rolling(window = sma).std()
 
+    signals = df.copy()
+    signals["signal"] = 0
+
+    # Generate the SMA
+    signals["sma20"] = signals["close"].rolling(window=sma).mean()
+
+    # Generate the BB
+    upper_bb = sma + std * 2
+    lower_bb = sma - std * 2
+
+    signals["upper_bb"], signals["lower_bb"] = upper_bb, lower_bb
+
+    return signals
+    
 
 
 
@@ -143,7 +156,7 @@ async def main():
         # Execute the trading strategy
         min_window = 22
         if df.shape[0] >= min_window:
-            signals = generate_signals(df)
+            signals = bollinger_bands(df)
             account = execute_trade_strategy(signals, account)
 
         # Update the plot
