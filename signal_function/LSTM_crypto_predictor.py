@@ -10,15 +10,16 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
 from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.cryptocurrencies import CryptoCurrencies
 
 # ! Long short-term memory (LSTM) deep learning algorithm is a specialized architecture that can "memorize" patterns from historical sequences of data and extrapolate such patterns for future events. Here I try to use it to predict BTC & ETH's price. 
 
 config = {
     "alpha_vantage": {
-        "key": "YOUR_API_KEY", # Claim your free API key here: https://www.alphavantage.co/support/#api-key
-        "symbol": "IBM",
-        "outputsize": "full",
-        "key_adjusted_close": "5. adjusted close",
+        "key": "R298VOBAB51H5V8O", # Claim your free API key here: https://www.alphavantage.co/support/#api-key
+        "symbol": "BTC",
+        "market": "USD",
+        "key_adjusted_close": "4b. close (USD)",
     },
     "data": {
         "window_size": 20,
@@ -52,8 +53,8 @@ config = {
 # ? We use the adjusted closing price here - as that is the "best practice"
 
 def download_data(config):
-    ts = TimeSeries(key=config["alpha_vantage"]["key"])
-    data, meta_data = ts.get_daily_adjusted(config["alpha_vantage"]["symbol"], outputsize=config["alpha_vantage"]["outputsize"])
+    cc = CryptoCurrencies(key=config["alpha_vantage"]["key"])
+    data, meta_data = cc.get_digital_currency_daily(symbol=config["alpha_vantage"]["symbol"], market=config["alpha_vantage"]["market"])
 
     data_date = [date for date in data.keys()]
     data_date.reverse()
