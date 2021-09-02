@@ -1,5 +1,4 @@
 import numpy as np
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,7 +11,7 @@ from matplotlib.pyplot import figure
 
 from alpha_vantage.timeseries import TimeSeries
 
-print("All libraries loaded")
+# ! Long short-term memory (LSTM) deep learning algorithm is a specialized architecture that can "memorize" patterns from historical sequences of data and extrapolate such patterns for future events. Here I try to use it to predict BTC & ETH's price. 
 
 config = {
     "alpha_vantage": {
@@ -49,6 +48,9 @@ config = {
     }
 }
 
+# ! We need historical stock price data to train our deep learning model
+# ? We use the adjusted closing price here - as that is the "best practice"
+
 def download_data(config):
     ts = TimeSeries(key=config["alpha_vantage"]["key"])
     data, meta_data = ts.get_daily_adjusted(config["alpha_vantage"]["symbol"], outputsize=config["alpha_vantage"]["outputsize"])
@@ -68,17 +70,8 @@ def download_data(config):
 
 data_date, data_close_price, num_data_points, display_date_range = download_data(config)
 
-# plot
 
-fig = figure(figsize=(25, 5), dpi=80)
-fig.patch.set_facecolor((1.0, 1.0, 1.0))
-plt.plot(data_date, data_close_price, color=config["plots"]["color_actual"])
-xticks = [data_date[i] if ((i%config["plots"]["xticks_interval"]==0 and (num_data_points-i) > config["plots"]["xticks_interval"]) or i==num_data_points-1) else None for i in range(num_data_points)] # make x ticks nice
-x = np.arange(0,len(xticks))
-plt.xticks(x, xticks, rotation='vertical')
-plt.title("Daily close price for " + config["alpha_vantage"]["symbol"] + ", " + display_date_range)
-plt.grid(b=None, which='major', axis='y', linestyle='--')
-plt.show()
+# ! Data normalization can increase the accuracy of the model and help the "gradient descent algorithm"(LSTM algorithm) converge more quickly. 
 
 class Normalizer():
     def __init__(self):
@@ -94,29 +87,29 @@ class Normalizer():
     def inverse_transform(self, x):
         return (x*self.sd) + self.mu
 
-# normalize
 scaler = Normalizer()
 normalized_data_close_price = scaler.fit_transform(data_close_price)
 
-def prepare_data_x(x, window_size):
-    # perform windowing
+# ! Predict the 21st day's close price based on the past 20 days' close price
+# ? Why choose 20 days? 
+# ? - When LSTM models are used in NLP, the number of words in a sentence typically ranges from 15 to 20 words
+# ? - Gradient descent considerations: attempting to back-propagate across very long input sequences may result in vanishing gradients
+# ? - Longer sequences tend to have much longer training times
+
+def prepare_data_x(x, window_size): # windowing
+
     n_row = x.shape[0] - window_size + 1
     output = np.lib.stride_tricks.as_strided(x, shape=(n_row, window_size), strides=(x.strides[0], x.strides[0]))
     return output[:-1], output[-1]
 
 
-def prepare_data_y(x, window_size):
-    # # perform simple moving average
-    # output = np.convolve(x, np.ones(window_size), 'valid') / window_size
+def prepare_data_y(x, window_size): # simple moving average
 
-    # use the next day as label
     output = x[window_size:]
     return output
 
 data_x, data_x_unseen = prepare_data_x(normalized_data_close_price, window_size=config["data"]["window_size"])
 data_y = prepare_data_y(normalized_data_close_price, window_size=config["data"]["window_size"])
-
-# split dataset
 
 split_index = int(data_y.shape[0]*config["data"]["train_split_size"])
 data_x_train = data_x[:split_index]
@@ -124,31 +117,8 @@ data_x_val = data_x[split_index:]
 data_y_train = data_y[:split_index]
 data_y_val = data_y[split_index:]
 
-# prepare data for plotting
 
-to_plot_data_y_train = np.zeros(num_data_points)
-to_plot_data_y_val = np.zeros(num_data_points)
-
-to_plot_data_y_train[config["data"]["window_size"]:split_index+config["data"]["window_size"]] = scaler.inverse_transform(data_y_train)
-to_plot_data_y_val[split_index+config["data"]["window_size"]:] = scaler.inverse_transform(data_y_val)
-
-to_plot_data_y_train = np.where(to_plot_data_y_train == 0, None, to_plot_data_y_train)
-to_plot_data_y_val = np.where(to_plot_data_y_val == 0, None, to_plot_data_y_val)
-
-## plots
-
-fig = figure(figsize=(25, 5), dpi=80)
-fig.patch.set_facecolor((1.0, 1.0, 1.0))
-plt.plot(data_date, to_plot_data_y_train, label="Prices (train)", color=config["plots"]["color_train"])
-plt.plot(data_date, to_plot_data_y_val, label="Prices (validation)", color=config["plots"]["color_val"])
-xticks = [data_date[i] if ((i%config["plots"]["xticks_interval"]==0 and (num_data_points-i) > config["plots"]["xticks_interval"]) or i==num_data_points-1) else None for i in range(num_data_points)] # make x ticks nice
-x = np.arange(0,len(xticks))
-plt.xticks(x, xticks, rotation='vertical')
-plt.title("Daily close prices for " + config["alpha_vantage"]["symbol"] + " - showing training and validation data")
-plt.grid(b=None, which='major', axis='y', linestyle='--')
-plt.legend()
-plt.show()
-
+# ! Implement the data loader functionality
 
 class TimeSeriesDataset(Dataset):
     def __init__(self, x, y):
@@ -167,12 +137,13 @@ class TimeSeriesDataset(Dataset):
 dataset_train = TimeSeriesDataset(data_x_train, data_y_train)
 dataset_val = TimeSeriesDataset(data_x_val, data_y_val)
 
-print("Train data shape", dataset_train.x.shape, dataset_train.y.shape)
-print("Validation data shape", dataset_val.x.shape, dataset_val.y.shape)
-
 train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=True)
 val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=True)
 
+# ! Define 3 layers for our LSTM neural network & Randomly "dropout"/ignore some neurons during training to prevent overfitting
+# ! 1) To map input values into a high dimensional feature space
+# ! 2) To learn the data in sequence 
+# ! 3) To produce the predicted value based on LSTM's output 
 
 class LSTMModel(nn.Module):
     def __init__(self, input_size=1, hidden_layer_size=32, num_layers=2, output_size=1, dropout=0.2):
@@ -215,6 +186,7 @@ class LSTMModel(nn.Module):
         predictions = self.linear_2(x)
         return predictions[:, -1]
 
+# ! Start the model training process
 
 def run_epoch(dataloader, is_training=False):
     epoch_loss = 0
@@ -293,52 +265,6 @@ for idx, (x, y) in enumerate(val_dataloader):
     out = model(x)
     out = out.cpu().detach().numpy()
     predicted_val = np.concatenate((predicted_val, out))
-
-# prepare data for plotting
-
-to_plot_data_y_train_pred = np.zeros(num_data_points)
-to_plot_data_y_val_pred = np.zeros(num_data_points)
-
-to_plot_data_y_train_pred[config["data"]["window_size"]:split_index+config["data"]["window_size"]] = scaler.inverse_transform(predicted_train)
-to_plot_data_y_val_pred[split_index+config["data"]["window_size"]:] = scaler.inverse_transform(predicted_val)
-
-to_plot_data_y_train_pred = np.where(to_plot_data_y_train_pred == 0, None, to_plot_data_y_train_pred)
-to_plot_data_y_val_pred = np.where(to_plot_data_y_val_pred == 0, None, to_plot_data_y_val_pred)
-
-# plots
-
-fig = figure(figsize=(25, 5), dpi=80)
-fig.patch.set_facecolor((1.0, 1.0, 1.0))
-plt.plot(data_date, data_close_price, label="Actual prices", color=config["plots"]["color_actual"])
-plt.plot(data_date, to_plot_data_y_train_pred, label="Predicted prices (train)", color=config["plots"]["color_pred_train"])
-plt.plot(data_date, to_plot_data_y_val_pred, label="Predicted prices (validation)", color=config["plots"]["color_pred_val"])
-plt.title("Compare predicted prices to actual prices")
-xticks = [data_date[i] if ((i%config["plots"]["xticks_interval"]==0 and (num_data_points-i) > config["plots"]["xticks_interval"]) or i==num_data_points-1) else None for i in range(num_data_points)] # make x ticks nice
-x = np.arange(0,len(xticks))
-plt.xticks(x, xticks, rotation='vertical')
-plt.grid(b=None, which='major', axis='y', linestyle='--')
-plt.legend()
-plt.show()
-
-# prepare data for plotting the zoomed in view of the predicted prices vs. actual prices
-
-to_plot_data_y_val_subset = scaler.inverse_transform(data_y_val)
-to_plot_predicted_val = scaler.inverse_transform(predicted_val)
-to_plot_data_date = data_date[split_index+config["data"]["window_size"]:]
-
-# plots
-
-fig = figure(figsize=(25, 5), dpi=80)
-fig.patch.set_facecolor((1.0, 1.0, 1.0))
-plt.plot(to_plot_data_date, to_plot_data_y_val_subset, label="Actual prices", color=config["plots"]["color_actual"])
-plt.plot(to_plot_data_date, to_plot_predicted_val, label="Predicted prices (validation)", color=config["plots"]["color_pred_val"])
-plt.title("Zoom in to examine predicted price on validation data portion")
-xticks = [to_plot_data_date[i] if ((i%int(config["plots"]["xticks_interval"]/5)==0 and (len(to_plot_data_date)-i) > config["plots"]["xticks_interval"]/6) or i==len(to_plot_data_date)-1) else None for i in range(len(to_plot_data_date))] # make x ticks nice
-xs = np.arange(0,len(xticks))
-plt.xticks(xs, xticks, rotation='vertical')
-plt.grid(b=None, which='major', axis='y', linestyle='--')
-plt.legend()
-plt.show()
 
 # predict the closing price of the next trading day
 
