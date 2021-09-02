@@ -1,41 +1,5 @@
 # Project_2
 
-Trading Bot Features:
-
-- **top 10 coins prediction**
-- **shitcoins prediction**
-
-## My Idea
-
-### Back End
-
-#### generate_signals
-
-    exsiting:
-    > moving average
-
-    my suggestion:
-    > [Facebook's Prophet](https://research.fb.com/prophet-forecasting-at-scale/)
-    > [Whale Alert's API](https://whale-alert.io)
-    > [Deep Reinforcement Learning - Deep Q-learning](https://github.com/pskrunner14/trading-bot)
-    > [TradingView's API or Chart Data Extractor](https://github.com/jchao01/TradingView-data-scraper)
-
-#### execute_trade_strategy
-
-    my suggestion:
-    > Choose Risk Level
-
-### Database
-
-> local environment for now
-
-### Front End
-
-> CLI application
-> Dash application
-> Kibana with Elasticsearch
-> Telegram Chat Bot
-
 ## Get Start
 
 1. create a new conda environment for this project & activate it
