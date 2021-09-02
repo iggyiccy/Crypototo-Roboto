@@ -5,6 +5,9 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
+from prophet import Prophet
+from datetime import datetime
+import pickle
 
 
 def initialize(cash=None):
@@ -60,7 +63,7 @@ def fetch_data():
     return df
 
 
-def generate_signals(df):
+def moving_average_signals(df):
     """Generates trading signals for a given dataset."""
     print("-----> Generating trading signals <-----")
     # Set window
@@ -84,6 +87,14 @@ def generate_signals(df):
 
     return signals
 
+def whale_alert():
+    retrun signals
+
+def deep_inenforcement():
+    retrun signals
+
+def facebook_prophet():
+    retrun signals
 
 def execute_trade_strategy(signals, account):
     """Makes a buy/sell/hold decision."""
@@ -132,7 +143,7 @@ async def main():
         # Execute the trading strategy
         min_window = 22
         if df.shape[0] >= min_window:
-            signals = generate_signals(df)
+            signals = moving_average_signals(df)
             account = execute_trade_strategy(signals, account)
 
         # Update the plot
