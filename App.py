@@ -36,17 +36,17 @@ CONTENT_STYLE = {
 # define sidebar variables
 sidebar = html.Div(
     [
-        html.H2("Currency Convertor", className="display-4"),
+        html.H2("Trading Signals", className="display-4"),
         html.Hr(),
         html.P(
             "FinTech Boot Camp Project 2 Presentation", className="lead"
         ),
         dbc.Nav(
             [
-                dbc.NavLink("🌍 Local Price", href="/", active="exact"),
-                dbc.NavLink("💹 Analysis", href="/page-1", active="exact"),
-                dbc.NavLink("💱 Converter", href="/page-2", active="exact"),
-                dbc.NavLink("⏰ Crypto Updates", href="/page-3", active="exact")
+                dbc.NavLink("🌍 Whale Alerts", href="/", active="exact"),
+                dbc.NavLink("💹 Ichimoku Stragtegy", href="/page-1", active="exact"),
+                dbc.NavLink("💱 RSI Signaling", href="/page-2", active="exact"),
+                dbc.NavLink("⏰ LSTM Prediction", href="/page-3", active="exact")
             ],
             vertical=True,
             pills=True,
