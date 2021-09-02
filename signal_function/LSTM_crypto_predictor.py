@@ -16,7 +16,7 @@ from alpha_vantage.cryptocurrencies import CryptoCurrencies
 
 config = {
     "alpha_vantage": {
-        "key": "R298VOBAB51H5V8O", # Claim your free API key here: https://www.alphavantage.co/support/#api-key
+        "key": "your-API-key", # Claim your free API key here: https://www.alphavantage.co/support/#api-key
         "symbol": "BTC",
         "market": "USD",
         "key_adjusted_close": "4b. close (USD)",
