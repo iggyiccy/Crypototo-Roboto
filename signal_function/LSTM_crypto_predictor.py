@@ -286,7 +286,6 @@ to_plot_data_y_test_pred = np.zeros(plot_range)
 
 to_plot_data_y_val[:plot_range-1] = scaler.inverse_transform(data_y_val)[-plot_range+1:]
 to_plot_data_y_val_pred[:plot_range-1] = scaler.inverse_transform(predicted_val)[-plot_range+1:]
-
 to_plot_data_y_test_pred[plot_range-1] = scaler.inverse_transform(prediction)
 
 to_plot_data_y_val = np.where(to_plot_data_y_val == 0, None, to_plot_data_y_val)
