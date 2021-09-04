@@ -30,7 +30,6 @@ def get_ichimoku_plot():
     #return crypto_df
     #fetch_data().tail()
 
-
     index = pd.date_range(end, periods=26, freq='D')
     columns = crypto_df.columns
     dfna = pd.DataFrame(index=index, columns=columns)
@@ -158,3 +157,4 @@ def get_ichimoku_plot():
 #     entry_exit_plot.opts(xaxis=None)
 #     return entry_exit_plot
 # entry_exit_plot()
+
