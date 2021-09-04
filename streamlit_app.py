@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import lstm
 import ichimoku
+import rsi
 
 
 st.set_page_config(
@@ -55,6 +56,14 @@ for whale in range(5):
     amount_usd = whale_df.iloc[whale, 1]
     timestamp = whale_df.iloc[whale, 0]
     cols[whale].metric(label=str(timestamp), value="🐋", delta=amount_usd)
+
+"""
+---
+# 🎏 RSI Trading Strategy
+
+"""
+st.line_chart(rsi.get_rsi())
+
 
 """
 ---
