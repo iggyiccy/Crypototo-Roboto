@@ -55,18 +55,60 @@ with st.sidebar.form(key ='execution form'):
 
 # ! Trading Sidebar - End
 
+st.markdown(
 """
-# Welcome to Streamlit!
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
-In the meantime, below is an example of what you can do with just a few lines of code:
+<style>
+.wrapper {
+  height: 5vh;
+  /*This part is important for centering*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.typing-demo {
+  width: 22ch;
+  animation: typing 2s steps(22), blink 0.5s step-end infinite alternate;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 4em;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+</style>
+<div class="wrapper">
+    <div class="typing-demo">
+      🪄 Crypototo Roboto
+    </div>
+</div>
+<br />
+<br />
+<a href="https://github.com/cleopatrick1/Project_2"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="github repo"></a>
+<br />
+<br />
+<b>A one-stop shop of all the trading signals and technical indicators you will ever need! 🛍</b>
+<br />
+Don't forget to check out the <code>sidebar</code> where you can send order to Alpaca        instantly without needed to switch between browser tabs! 
 """
+, unsafe_allow_html=True)
 
 """
 ---
 # 🎏 Ichimoku Cloud Trading Strategy
-Ichimoku cloud is designed to spot direction and momentum in order to help you make buy and sell decisions more easily.
+[Ichimoku cloud](https://www.investopedia.com/terms/i/ichimoku-cloud.asp) is designed to spot direction and momentum in order to help you make buy and sell decisions more easily.
 Five indicators are used with each corresponding to a different timeline.
 """
 st.write(ichimoku.get_ichimoku_plot())
@@ -74,7 +116,8 @@ st.write(ichimoku.get_ichimoku_plot())
 
 """
 ---
-# 👀 Watch Out for Whales!  
+# 👀 Watch Out for Whales! 
+Price available in $USD - credit: [@whale-alert](https://whale-alert.io)
 """
 
 response = requests.get('https://api.whale-alert.io/v1/transactions?api_key=zd1tXydtCfegKwzLvUIMPCAasDBMiCnk&currency=btc&limit=5').json()
@@ -100,7 +143,7 @@ for whale in range(5):
 """
 ---
 # 📈 Bitcoin Prediction with LSTM Machine Learning
-Long short-term memory (LSTM) deep learning algorithm is a specialized architecture that can "memorize" patterns from historical sequences of data and extrapolate such patterns for future events. 
-Here I try to use it to predict BTC's closing price of the next trading day.  
+[Long short-term memory (LSTM)](https://en.wikipedia.org/wiki/Long_short-term_memory) deep learning algorithm is a specialized architecture that can "memorize" patterns from historical sequences of data and extrapolate such patterns for future events. 
 """
+st.markdown("Here we try to use LSTM to predict BTC's closing price of the next trading day. ")
 st.write(lstm.get_lstm_plot_data())
