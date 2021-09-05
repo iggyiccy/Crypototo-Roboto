@@ -36,4 +36,4 @@ terraform.rc
 signal_function.zip
 response.json
 .terraform.lock.hcl
-
+.env
