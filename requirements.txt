@@ -16,3 +16,4 @@ pandas_datareader==0.10.0
 plotly==5.3.1
 streamlit==0.88.0
 yfinance==0.1.63
+alpaca_trade_api==1.2.3
