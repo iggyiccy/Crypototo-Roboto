@@ -1,6 +1,8 @@
-# Project_2
+# 🪄 Crypototo Roboto
 
-## Get Start
+![](demo.gif)
+
+# 🚀 Get Start
 
 1. create a new conda environment for this project & activate it
 
