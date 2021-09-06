@@ -1,21 +1,12 @@
-import nest_asyncio
-import os
-import ccxt
-import asyncio
 import numpy as np
 import pandas as pd
-import plotly.express as px
-import hvplot.pandas
-from pathlib import Path
 from pandas_datareader import data, wb
 import yfinance as yf
 import datetime as dt
-import matplotlib.pyplot as plt
 from chart_studio import plotly
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode, plot, iplot
-import kaleido
 
 def get_ichimoku_plot():
 
@@ -103,58 +94,11 @@ def get_ichimoku_plot():
 
 
     #Show
-    fig.update_layout(height=900, title_text="Entry and Exit Points of Ichimoku Span A & B crossover Trading Strategy")
-    # fig.layout.plot_bgcolor = 'darkgrey'
-    # print("----------------------Buy when green dot appears------------------------")
-    # print("----------------------Sell when red dot appears------------------------")
-    # fig.show()
-
-    # fig.write_html("Ichimoku.html")
+    fig.update_layout(height=900, title_text="Entry and Exit Points of Ichimoku Span A & B crossover Trading Strategy", legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+))
 
     return fig
-
-
-# def entry_exit_plot():
-#     # Visualize exit position relative to close price
-#     exit = crypto_df[crypto_df['Signal1'] == -1.0]['Close'].hvplot.scatter(
-#         color='red',
-#         legend=False,
-#         ylabel='Price in $',
-#         width=1000,
-#         height=400)
-
-# # Visualize entry position relative to close price
-#     entry = crypto_df[crypto_df['Signal1'] == 1.0]['Close'].hvplot.scatter(
-#         color='green',
-#         legend=False,
-#         ylabel='Price in $',
-#         width=1000,
-#         height=400)
-
-# # Visualize close price for the investment
-#     security_close = crypto_df[['Close']].hvplot(
-#         line_color='lightgray',
-#         ylabel='Price in $',
-#         width=1000,
-#         height=400)
-
-# # Visualize moving averages
-#     conversionline = crypto_df[['tenkan_sen']].hvplot(
-#         color='green',
-#         ylabel='Price in $',
-#         width=1000,
-#         height=400)
-
-#     baseline = crypto_df[['kijun_sen']].hvplot(
-#         color='red',
-#         ylabel='Price in $',
-#         width=1000,
-#         height=400)
-
-#     print("----------------------Buy when green dot appears------------------------")
-#     print("----------------------Sell when red dot appears------------------------")
-#     entry_exit_plot = security_close * conversionline * baseline * entry * exit
-#     entry_exit_plot.opts(xaxis=None)
-#     return entry_exit_plot
-# entry_exit_plot()
-

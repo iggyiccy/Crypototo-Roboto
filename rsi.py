@@ -1,7 +1,7 @@
 # Imports
 import streamlit as st
 import sys
-import websocket, json, pprint, talib, numpy as np, time, datetime
+import websocket, json, pprint, numpy as np, time, datetime
 from datetime import datetime
 import pandas as pd
 import pytz, requests
