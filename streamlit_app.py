@@ -27,7 +27,7 @@ st.set_page_config(
 )
 
 # ! Trading Sidebar - Start 
-# TODO: Change the below key to your own API key or Make sure you have set your environment variables
+# TODO: Change the below key to your own API key or Please follow the README file to export keys 
 
 alpaca_api_key = os.getenv("APCA_API_KEY_ID")
 alpaca_secret_key = os.getenv("APCA_API_SECRET_KEY")
