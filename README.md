@@ -2,6 +2,10 @@
 
 ![](demo.gif)
 
+# About 
+
+An interactive web application build using Streamlit which user can place trade order within the application. It comes with LSTM machine learning model for price prediction, Ichimoku Cloud, RSI and Whale Alert.
+
 # 🚀 Get Start
 
 1. create a new conda environment for this project & activate it
