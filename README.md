@@ -1,5 +1,7 @@
 # 🪄 Crypototo Roboto
 
+## [Click here to view Demo](https://share.streamlit.io/iggyiccy/crypototo-roboto/main)
+
 ![](demo.gif)
 
 # About 
